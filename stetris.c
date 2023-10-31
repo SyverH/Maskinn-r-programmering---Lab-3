@@ -108,8 +108,8 @@ int readSenseHatJoystick() {
         // Initialises a char array where i can store the name of the devices
         char deviceName[256];
         ioctl(fd, EVIOCGNAME(sizeof(deviceName)), deviceName);
-        
-        if strstr(deviceName, "Raspberry Pi Sense HAT Joystick") {
+
+        if (strstr(deviceName, "Raspberry Pi Sense HAT Joystick")) {
           deviceLocated = true;
           break;
         }
