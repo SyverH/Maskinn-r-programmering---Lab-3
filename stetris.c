@@ -93,7 +93,7 @@ int readSenseHatJoystick() {
   // Initialises fd as an error
   int fd = -1;
 
-  if (n < 0) {
+  if (numLoops < 0) {
     perror("scandir failed!");
     return 1;
   }
