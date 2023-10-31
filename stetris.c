@@ -125,7 +125,10 @@ int readSenseHatJoystick() {
     return 1;
   }
 
-  fprintf(stdout, "INFO: using Sense HAT Joystick at %s\n", path);
+  if(deviceLocated){
+    fprintf(stdout, "INFO: using Sense HAT Joystick at %s\n", path);
+  }
+  
 
   return 0;
 }
@@ -463,6 +466,7 @@ int main(int argc, char **argv) {
     if (!key)
       key = readKeyboard();
     if (key == KEY_ENTER)
+      printf("ENTER\n");
       break;
 
     bool playfieldChanged = sTetris(key);
