@@ -84,7 +84,7 @@ int readSenseHatJoystick() {
                     printf("Retning: Venstre\n");
                 } else if (ev.code == KEY_RIGHT) {
                     printf("Retning: Høyre\n");
-                } else if (ev.code == KEY_ENTER) {
+                } else if (ev.code == 28) {
                     printf("Retning: Enter\n");
                 }
             }
