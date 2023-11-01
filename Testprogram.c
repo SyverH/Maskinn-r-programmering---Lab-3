@@ -74,8 +74,6 @@ int readSenseHatJoystick() {
 
         if (ev.type == EV_KEY && (ev.code == KEY_UP || ev.code == KEY_DOWN || ev.code == KEY_LEFT || ev.code == KEY_RIGHT)) {
             if (ev.value == 0) {
-                // Knappen slippes
-                printf("Retning: Stopp\n");
             } else if (ev.value == 1) {
                 // Knappen trykkes ned
                 if (ev.code == KEY_UP) {
@@ -86,6 +84,8 @@ int readSenseHatJoystick() {
                     printf("Retning: Venstre\n");
                 } else if (ev.code == KEY_RIGHT) {
                     printf("Retning: Høyre\n");
+                } else if (ev.code == KEY_ENTER) {
+                    printf("Retning: Enter\n");
                 }
             }
         }
