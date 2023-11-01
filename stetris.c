@@ -21,7 +21,7 @@ int fd = -1;
 
 int frameBufferfd = -1;
 
-uint16_t pixelarray[8][8];
+uint16_t* pixelarray[8][8];
 
 // The game state can be used to detect what happens on the playfield
 #define GAMEOVER   0
@@ -33,6 +33,7 @@ uint16_t pixelarray[8][8];
 // the game logic allocate/deallocate and reset the memory
 typedef struct {
   bool occupied;
+  uint16_t color;
 } tile;
 
 typedef struct {
@@ -135,6 +136,7 @@ bool initializeSenseHat() {
         if (strstr(frameBufferdeviceName, "RPi-Sense FB")) {
           printf("Sense HAT Framebuffer funnet\n");
           frameBufferDeviceLocated = true;
+          pixelarray = mmap(NULL, 128, PROT_READ | PROT_WRITE, MAP_SHARED, frameBufferfd, 0);
           break;
         }
       }
@@ -196,6 +198,8 @@ bool initializeSenseHat() {
 // Here you can free up everything that you might have opened/allocated
 void freeSenseHat() {
   close(fd);
+  close(frameBufferfd);
+  munmap(pixelarray, 128);
 }
 
 // This function should return the key that corresponds to the joystick press
@@ -243,7 +247,14 @@ int readSenseHatJoystick() {
 // every game tick. The parameter playfieldChanged signals whether the game logic
 // has changed the playfield
 void renderSenseHatMatrix(bool const playfieldChanged) {
-  (void) playfieldChanged;
+  if (!playfieldChanged){
+    return;
+  }
+  for (int i = 0; i < 8; i++) {
+    for (int j = 0; j <8; j++) {
+      drawPixel(i, j, game.playfield[i][j].color);
+    }
+  }
 }
 
 
@@ -253,6 +264,7 @@ void renderSenseHatMatrix(bool const playfieldChanged) {
 
 static inline void newTile(coord const target) {
   game.playfield[target.y][target.x].occupied = true;
+  game.playfield[target.y][target.x].color = rgb565(rand() % 0xffff, rand() % 0xffff, rand() % 0xffff);
 }
 
 static inline void copyTile(coord const to, coord const from) {
