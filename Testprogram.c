@@ -67,7 +67,10 @@ int readSenseHatJoystick() {
   return 0;
 }
 
-while(1){
-  readSenseHatJoystick();
-  sleep(1);
+int main() {
+  while(1){
+    readSenseHatJoystick();
+    sleep(1);
+  }
+  return 0;
 }
