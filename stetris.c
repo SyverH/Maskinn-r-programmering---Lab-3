@@ -154,6 +154,7 @@ int readSenseHatJoystick() {
             close(fd);
             return 0;
         }
+  }
 
   /*
   // Hvis avlesning av hendelse feiler, avslutt
