@@ -495,11 +495,12 @@ int main(int argc, char **argv) {
 
     if (!key)
       key = readKeyboard();
-    if (key == KEY_ENTER)
+    if (key == KEY_ENTER){
       printf("wtf\n");
       printf("Is this it?\n");
       printf("ENTER\n");
       break;
+    }
 
     printf("3\n");
 
