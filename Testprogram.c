@@ -78,6 +78,7 @@ int readSenseHatJoystick() {
             // Rising edge detector, så knappen ikke leses av flere ganger
             if (ev.value == 0) {
             } else if (ev.value == 1) {
+                printf("ev.code: %d\n", ev.code);
                 return ev.code;
                 // Knappen trykkes ned
                 /*
