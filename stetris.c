@@ -65,20 +65,6 @@ gameConfig game = {
 // Here you can initialize what ever you need for your task
 // return false if something fails, else true
 bool initializeSenseHat() {
-  return true;
-}
-
-// This function is called when the application exits
-// Here you can free up everything that you might have opened/allocated
-void freeSenseHat() {
-  return 0;
-}
-
-// This function should return the key that corresponds to the joystick press
-// KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, with the respective direction
-// and KEY_ENTER, when the the joystick is pressed
-// !!! when nothing was pressed you MUST return 0 !!!
-int readSenseHatJoystick() {
   struct input_event ev;
   struct timeval timeout;
   struct dirent **subDirectoryNameList;
@@ -96,7 +82,7 @@ int readSenseHatJoystick() {
   // Hvis scandir feiler, avslutt
   if (numLoops < 0) {
     perror("scandir failed!");
-    return 0;
+    return false;
   }
 
   for (int i = 0; i < numLoops; i++) {
@@ -127,13 +113,28 @@ int readSenseHatJoystick() {
   // Hvis enhet ikke er funnet, avslutt
   if (!deviceLocated) {
     fprintf(stderr, "ERROR: could not locate Sense HAT Joystick\n");
-    return 0;
+    return false;
   }
 
   // Hvis enhet er funnet, skriv ut path til enhet
   if(deviceLocated){
     fprintf(stdout, "INFO: using Sense HAT Joystick at %s\n", path);
   }
+  return true;
+}
+
+// This function is called when the application exits
+// Here you can free up everything that you might have opened/allocated
+void freeSenseHat() {
+
+}
+
+// This function should return the key that corresponds to the joystick press
+// KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, with the respective direction
+// and KEY_ENTER, when the the joystick is pressed
+// !!! when nothing was pressed you MUST return 0 !!!
+int readSenseHatJoystick() {
+  
   
 
   //yess
@@ -142,7 +143,7 @@ int readSenseHatJoystick() {
         if (read(fd, &ev, sizeof(struct input_event)) == -1) {
             perror("Lesing av hendelse feilet");
             close(fd);
-            return 0;
+            return false;
         }
         
         // Begrenser hvilke event-types som returneres
