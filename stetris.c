@@ -99,6 +99,7 @@ bool initializeSenseHat() {
   }
 
   for (int i = 0; i < numFramebufferLoops; i++) {
+    printf(i);
     if (strstr(frameBuffersubDirectoryNameList[i]->d_name, "fb")) {
       sprintf(frameBufferpath, "/dev/%s", frameBuffersubDirectoryNameList[i]->d_name);
       
