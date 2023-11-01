@@ -29,7 +29,7 @@ int readSenseHatJoystick() {
 
   if (numLoops < 0) {
     perror("scandir failed!");
-    return 1;
+    return 0;
   }
 
   for (int i = 0; i < numLoops; i++) {
@@ -56,7 +56,7 @@ int readSenseHatJoystick() {
 
   if (!deviceLocated) {
     fprintf(stderr, "ERROR: could not locate Sense HAT Joystick\n");
-    return 1;
+    return 0;
   }
 
   if(deviceLocated){
@@ -66,17 +66,21 @@ int readSenseHatJoystick() {
 
   //yess
   while (1) {
+        // Hvis avlesning av hendelse feiler, avslutt
         if (read(fd, &ev, sizeof(struct input_event)) == -1) {
             perror("Lesing av hendelse feilet");
             close(fd);
-            return 1;
+            return 0;
         }
-
+        
+        // Begrenser hvilke event-types som returneres
         if (ev.type == EV_KEY && (ev.code == KEY_UP || ev.code == KEY_DOWN || ev.code == KEY_LEFT || ev.code == KEY_RIGHT || ev.code == KEY_ENTER)) {
+            // Rising edge detector, så knappen ikke leses av flere ganger
             if (ev.value == 0) {
             } else if (ev.value == 1) {
+                return ev.code;
                 // Knappen trykkes ned
-                
+                /*
                 if (ev.code == KEY_UP) {
                     printf("Retning: Opp\n");
                 } else if (ev.code == KEY_DOWN) {
@@ -88,6 +92,7 @@ int readSenseHatJoystick() {
                 } else if (ev.code == 28) {
                     printf("Retning: Enter\n");
                 }
+                */
             }
         }
     }
