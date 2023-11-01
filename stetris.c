@@ -149,8 +149,6 @@ int readSenseHatJoystick() {
       // Rising edge detector, så knappen ikke leses av flere ganger
       if (ev.value == 0) {
       } else if (ev.value == 1) {
-          // Skriver ut event-koden til knapp som er trykket
-          printf("ev.code: %d\n", ev.code);
           // Returnerer event-koden til knapp som er trykket
           return ev.code;
       }
@@ -487,28 +485,18 @@ int main(int argc, char **argv) {
     struct timeval sTv, eTv;
     gettimeofday(&sTv, NULL);
 
-    printf("1\n");
-
     int key = readSenseHatJoystick();
-
-    printf("2\n");
 
     if (!key)
       key = readKeyboard();
     if (key == KEY_ENTER){
-      printf("wtf\n");
-      printf("Is this it?\n");
       printf("ENTER\n");
       break;
     }
 
-    printf("3\n");
-
     bool playfieldChanged = sTetris(key);
     renderConsole(playfieldChanged);
     renderSenseHatMatrix(playfieldChanged);
-
-    printf("4\n");
 
     // Wait for next tick
     gettimeofday(&eTv, NULL);
@@ -518,7 +506,6 @@ int main(int argc, char **argv) {
     }
     game.tick = (game.tick + 1) % game.nextGameTick;
   }
-  printf("I broke free!\n");
 
   freeSenseHat();
   free(game.playfield);
