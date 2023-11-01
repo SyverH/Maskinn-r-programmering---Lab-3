@@ -111,6 +111,7 @@ bool initializeSenseHat() {
 
         // Hvis enheten er funnet, avslutt
         if (strstr(deviceName, "RPi-Sense FB")) {
+          printf("Sense HAT Framebuffer funnet\n");
           frameBufferDeviceLocated = true;
           break;
         }
