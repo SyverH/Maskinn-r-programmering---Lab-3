@@ -109,7 +109,8 @@ bool initializeSenseHat() {
       if (frameBufferfd != -1) {
         // Initialiserer deviceName som et char array der jeg kan lagre navnet på enheten som leses
         char frameBufferdeviceName[256];
-        ioctl(frameBufferfd, EVIOCGNAME(sizeof(frameBufferdeviceName)), frameBufferdeviceName);
+        ioctl(frameBufferfd, FBIOGET_FSCREENINFO, frameBufferdeviceName);
+
         printf("the deviceName is: %s\n", frameBufferdeviceName);
         // Hvis enheten er funnet, avslutt
         if (strstr(frameBufferdeviceName, "RPi-Sense FB")) {
