@@ -130,7 +130,7 @@ bool initializeSenseHat() {
 // This function is called when the application exits
 // Here you can free up everything that you might have opened/allocated
 void freeSenseHat() {
-
+  close(fd);
 }
 
 // This function should return the key that corresponds to the joystick press
@@ -139,27 +139,24 @@ void freeSenseHat() {
 // !!! when nothing was pressed you MUST return 0 !!!
 int readSenseHatJoystick() {
   
-  //while (1) {
-        // Hvis avlesning av hendelse feiler, avslutt
-        if (read(fd, &ev, sizeof(struct input_event)) == -1) {
-            perror("Lesing av hendelse feilet");
-            close(fd);
-            return 0;
-        }
-        
-        // Begrenser hvilke event-types som returneres
-        if (ev.type == EV_KEY && (ev.code == KEY_UP || ev.code == KEY_DOWN || ev.code == KEY_LEFT || ev.code == KEY_RIGHT || ev.code == KEY_ENTER)) {
-            // Rising edge detector, så knappen ikke leses av flere ganger
-            if (ev.value == 0) {
-            } else if (ev.value == 1) {
-                // Skriver ut event-koden til knapp som er trykket
-                printf("ev.code: %d\n", ev.code);
-                // Returnerer event-koden til knapp som er trykket
-                return ev.code;
-            }
-        }
-    //}
-  // Returnerer 0 hvis ingen knapp er trykket
+  // Hvis avlesning av hendelse feiler, avslutt
+  if (read(fd, &ev, sizeof(struct input_event)) == -1) {
+      perror("Lesing av hendelse feilet");
+      close(fd);
+      return 0;
+  }
+  
+  // Begrenser hvilke event-types som returneres
+  if (ev.type == EV_KEY && (ev.code == KEY_UP || ev.code == KEY_DOWN || ev.code == KEY_LEFT || ev.code == KEY_RIGHT || ev.code == KEY_ENTER)) {
+      // Rising edge detector, så knappen ikke leses av flere ganger
+      if (ev.value == 0) {
+      } else if (ev.value == 1) {
+          // Skriver ut event-koden til knapp som er trykket
+          printf("ev.code: %d\n", ev.code);
+          // Returnerer event-koden til knapp som er trykket
+          return ev.code;
+      }
+  }
   return 0;
 }
 
