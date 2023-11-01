@@ -83,13 +83,13 @@ uint16_t rgb565(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 void drawPixel(uint8_t x, uint8_t y, uint16_t color) {
-  pixelarray[x][y] = color;
+  pixelarray->pixel[x][y] = color;
 }
 
 void fillPixelArray(uint16_t color) {
   for (int i = 0; i < 8; i++) {
     for (int j = 0; j <8; j++) {
-      pixelarray[i][j] = color;
+      pixelarray->pixel[i][j] = color;
     }
   }
 }
