@@ -496,6 +496,7 @@ int main(int argc, char **argv) {
     if (!key)
       key = readKeyboard();
     if (key == KEY_ENTER)
+      printf("Is this it?\n");
       printf("ENTER\n");
       break;
 
