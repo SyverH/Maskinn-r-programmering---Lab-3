@@ -64,6 +64,33 @@ int readSenseHatJoystick() {
   }
   
 
+  //yess
+  while (1) {
+        if (read(fd, &ev, sizeof(struct input_event)) == -1) {
+            perror("Lesing av hendelse feilet");
+            close(fd);
+            return 1;
+        }
+
+        if (ev.type == EV_KEY && (ev.code == KEY_UP || ev.code == KEY_DOWN || ev.code == KEY_LEFT || ev.code == KEY_RIGHT)) {
+            if (ev.value == 0) {
+                // Knappen slippes
+                printf("Retning: Stopp\n");
+            } else if (ev.value == 1) {
+                // Knappen trykkes ned
+                if (ev.code == KEY_UP) {
+                    printf("Retning: Opp\n");
+                } else if (ev.code == KEY_DOWN) {
+                    printf("Retning: Ned\n");
+                } else if (ev.code == KEY_LEFT) {
+                    printf("Retning: Venstre\n");
+                } else if (ev.code == KEY_RIGHT) {
+                    printf("Retning: Høyre\n");
+                }
+            }
+        }
+    }
+
   return 0;
 }
 
