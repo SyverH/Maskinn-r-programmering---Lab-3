@@ -71,7 +71,7 @@ bool initializeSenseHat() {
 // This function is called when the application exits
 // Here you can free up everything that you might have opened/allocated
 void freeSenseHat() {
-
+  return 0;
 }
 
 // This function should return the key that corresponds to the joystick press
