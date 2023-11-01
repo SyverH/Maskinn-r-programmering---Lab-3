@@ -110,7 +110,7 @@ bool initializeSenseHat() {
         // Initialiserer deviceName som et char array der jeg kan lagre navnet på enheten som leses
         char deviceName[256];
         ioctl(frameBufferfd, EVIOCGNAME(sizeof(deviceName)), deviceName);
-
+        printf("the deviceName is: %s\n", deviceName);
         // Hvis enheten er funnet, avslutt
         if (strstr(deviceName, "RPi-Sense FB")) {
           printf("Sense HAT Framebuffer funnet\n");
