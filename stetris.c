@@ -17,6 +17,8 @@ struct input_event ev;
 // Initialises fd as an error
 int fd = -1;
 
+int frameBufferfd = -1;
+
 // The game state can be used to detect what happens on the playfield
 #define GAMEOVER   0
 #define ACTIVE     (1 << 0)
@@ -73,19 +75,61 @@ bool initializeSenseHat() {
   
   struct timeval timeout;
   struct dirent **subDirectoryNameList;
+  struct dirent **frameBuffersubDirectoryNameList;
 
   char path[64];
+  char frameBufferpath[64];
 
   bool deviceLocated = false;
+  bool frameBufferDeviceLocated = false;
 
   // This loop will scan the /dev/input directory for devices, allowing all devices through
   int numLoops = scandir("/dev/input", &subDirectoryNameList, NULL, alphasort);
+  int numFramebufferLoops = scandir("/dev", &frameBuffersubDirectoryNameList, NULL, alphasort);
 
   // Hvis scandir feiler, avslutt
   if (numLoops < 0) {
     perror("scandir failed!");
     return false;
   }
+
+  if (numFramebufferLoops < 0) {
+    perror("scandir failed!");
+    return false;
+  }
+
+  for (int i = 0; i < numFramebufferLoops; i++) {
+    if (strstr(frameBuffersubDirectoryNameList[i]->d_name, "fb")) {
+      sprintf(frameBufferpath, "/dev/%s", frameBuffersubDirectoryNameList[i]->d_name);
+      
+      frameBufferfd = open(frameBufferpath, O_RDWR);
+
+      if (frameBufferfd != -1) {
+        // Initialiserer deviceName som et char array der jeg kan lagre navnet på enheten som leses
+        char deviceName[256];
+        ioctl(frameBufferfd, EVIOCGNAME(sizeof(deviceName)), deviceName);
+
+        // Hvis enheten er funnet, avslutt
+        if (strstr(deviceName, "RPi-Sense FB")) {
+          frameBufferDeviceLocated = true;
+          break;
+        }
+      }
+      close(frameBufferfd);
+  }
+  free(frameBuffersubDirectoryNameList[i]);
+  }
+  free(frameBuffersubDirectoryNameList);
+
+  if(!frameBufferDeviceLocated){
+    fprintf(stderr, "ERROR: could not locate Sense HAT Framebuffer\n");
+    return false;
+  }
+
+  if(frameBufferDeviceLocated){
+    fprintf(stdout, "INFO: using Sense HAT Framebuffer at %s\n", frameBufferpath);
+  }
+
 
   for (int i = 0; i < numLoops; i++) {
     if (strstr(subDirectoryNameList[i]->d_name, "event")) {
@@ -156,14 +200,6 @@ int readSenseHatJoystick() {
         }
   }
 
-  /*
-  // Hvis avlesning av hendelse feiler, avslutt
-  if (read(fd, &ev, sizeof(struct input_event)) == -1) {
-      perror("Lesing av hendelse feilet");
-      close(fd);
-      return 0;
-  }
-  */
   // Begrenser hvilke event-types som returneres
   if (ev.type == EV_KEY && (ev.code == KEY_UP || ev.code == KEY_DOWN || ev.code == KEY_LEFT || ev.code == KEY_RIGHT || ev.code == KEY_ENTER)) {
       // Rising edge detector, så knappen ikke leses av flere ganger
