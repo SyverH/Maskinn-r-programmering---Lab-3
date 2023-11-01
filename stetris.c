@@ -12,6 +12,11 @@
 #include <dirent.h>
 #include <fcntl.h>
 
+struct input_event ev;
+
+// Initialises fd as an error
+int fd = -1;
+
 // The game state can be used to detect what happens on the playfield
 #define GAMEOVER   0
 #define ACTIVE     (1 << 0)
@@ -65,7 +70,7 @@ gameConfig game = {
 // Here you can initialize what ever you need for your task
 // return false if something fails, else true
 bool initializeSenseHat() {
-  struct input_event ev;
+  
   struct timeval timeout;
   struct dirent **subDirectoryNameList;
 
@@ -76,8 +81,7 @@ bool initializeSenseHat() {
   // This loop will scan the /dev/input directory for devices, allowing all devices through
   int numLoops = scandir("/dev/input", &subDirectoryNameList, NULL, alphasort);
 
-  // Initialises fd as an error
-  int fd = -1;
+
 
   // Hvis scandir feiler, avslutt
   if (numLoops < 0) {
@@ -135,9 +139,6 @@ void freeSenseHat() {
 // !!! when nothing was pressed you MUST return 0 !!!
 int readSenseHatJoystick() {
   
-  
-
-  //yess
   while (1) {
         // Hvis avlesning av hendelse feiler, avslutt
         if (read(fd, &ev, sizeof(struct input_event)) == -1) {
