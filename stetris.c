@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <linux/fb.h>
 #include <stdint.h>
+#include <sys/mman.h>
 
 struct input_event ev;
 
