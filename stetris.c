@@ -20,6 +20,8 @@ int fd = -1;
 
 int frameBufferfd = -1;
 
+uint16_t pixelarray[8][8];
+
 // The game state can be used to detect what happens on the playfield
 #define GAMEOVER   0
 #define ACTIVE     (1 << 0)
@@ -68,6 +70,21 @@ gameConfig game = {
                    .initNextGameTick = 50,
 };
 
+uint16_t rgb565(uint8_t r, uint8_t g, uint8_t b) {
+  return ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
+}
+
+void drawPixel(uint8_t x, uint8_t y, uint16_t color) {
+  pixelarray[x][y] = color;
+}
+
+void fillPixelArray(uint16_t color) {
+  for (int i = 0; i < 8; i++) {
+    for (int j = 0; j <8; j++) {
+      pixelarray[i][j] = color;
+    }
+  }
+}
 
 // This function is called on the start of your application
 // Here you can initialize what ever you need for your task
@@ -208,10 +225,13 @@ int readSenseHatJoystick() {
   // Begrenser hvilke event-types som returneres
   if (ev.type == EV_KEY && (ev.code == KEY_UP || ev.code == KEY_DOWN || ev.code == KEY_LEFT || ev.code == KEY_RIGHT || ev.code == KEY_ENTER)) {
       // Rising edge detector, så knappen ikke leses av flere ganger
-      if (ev.value == 0) {
-      } else if (ev.value == 1) {
-          // Returnerer event-koden til knapp som er trykket
-          return ev.code;
+      if (ev.value == 1) {
+        // Returnerer event-koden til knapp som er trykket
+        return ev.code;
+      }
+      else if (ev.value == 2) {
+        // Returnerer event-koden til knapp som er holdt inne
+        return ev.code;
       }
   }
   return 0;
