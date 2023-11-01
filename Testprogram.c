@@ -66,3 +66,8 @@ int readSenseHatJoystick() {
 
   return 0;
 }
+
+while(1){
+  readSenseHatJoystick();
+  sleep(1);
+}
