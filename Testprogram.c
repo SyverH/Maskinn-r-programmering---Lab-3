@@ -27,6 +27,7 @@ int readSenseHatJoystick() {
   // Initialises fd as an error
   int fd = -1;
 
+  // Hvis scandir feiler, avslutt
   if (numLoops < 0) {
     perror("scandir failed!");
     return 0;
@@ -39,10 +40,11 @@ int readSenseHatJoystick() {
       fd = open(path, O_RDONLY);
 
       if (fd != -1) {
-        // Initialises a char array where i can store the name of the devices
+        // Initialiserer deviceName som et char array der jeg kan lagre navnet på enheten som leses
         char deviceName[256];
         ioctl(fd, EVIOCGNAME(sizeof(deviceName)), deviceName);
 
+        // Hvis enheten er funnet, avslutt
         if (strstr(deviceName, "Raspberry Pi Sense HAT Joystick")) {
           deviceLocated = true;
           break;
@@ -50,15 +52,19 @@ int readSenseHatJoystick() {
       }
       close(fd);
     }
+    // Gi slipp på minne som er allokert av scandir()
     free(subDirectoryNameList[i]);
   }
+  // Gi slipp på minne som er allokert av scandir()
   free(subDirectoryNameList);
 
+  // Hvis enhet ikke er funnet, avslutt
   if (!deviceLocated) {
     fprintf(stderr, "ERROR: could not locate Sense HAT Joystick\n");
     return 0;
   }
 
+  // Hvis enhet er funnet, skriv ut path til enhet
   if(deviceLocated){
     fprintf(stdout, "INFO: using Sense HAT Joystick at %s\n", path);
   }
@@ -78,26 +84,14 @@ int readSenseHatJoystick() {
             // Rising edge detector, så knappen ikke leses av flere ganger
             if (ev.value == 0) {
             } else if (ev.value == 1) {
+                // Skriver ut event-koden til knapp som er trykket
                 printf("ev.code: %d\n", ev.code);
+                // Returnerer event-koden til knapp som er trykket
                 return ev.code;
-                // Knappen trykkes ned
-                /*
-                if (ev.code == KEY_UP) {
-                    printf("Retning: Opp\n");
-                } else if (ev.code == KEY_DOWN) {
-                    printf("Retning: Ned\n");
-                } else if (ev.code == KEY_LEFT) {
-                    printf("Retning: Venstre\n");
-                } else if (ev.code == KEY_RIGHT) {
-                    printf("Retning: Høyre\n");
-                } else if (ev.code == 28) {
-                    printf("Retning: Enter\n");
-                }
-                */
             }
         }
     }
-
+  // Returnerer 0 hvis ingen knapp er trykket
   return 0;
 }
 
