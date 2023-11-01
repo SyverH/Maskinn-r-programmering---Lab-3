@@ -99,11 +99,9 @@ bool initializeSenseHat() {
   }
 
   for (int i = 0; i < numFramebufferLoops; i++) {
-    printf("on loop %d\n", i);
     if (strstr(frameBuffersubDirectoryNameList[i]->d_name, "fb")) {
-      printf("fant fb\n");
       sprintf(frameBufferpath, "/dev/%s", frameBuffersubDirectoryNameList[i]->d_name);
-      
+      printf("the path is: %s\n", frameBufferpath);
       frameBufferfd = open(frameBufferpath, O_RDWR);
 
       if (frameBufferfd != -1) {
