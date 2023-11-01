@@ -22,13 +22,18 @@ int fd = -1;
 
 int frameBufferfd = -1;
 
-uint16_t* pixelarray[8][8];
 
 // The game state can be used to detect what happens on the playfield
 #define GAMEOVER   0
 #define ACTIVE     (1 << 0)
 #define ROW_CLEAR  (1 << 1)
 #define TILE_ADDED (1 << 2)
+
+typedef struct {
+  uint16_t pixel[8][8]; // 8x8 pixel array
+}pixeltype;
+
+pixeltype* pixelarray;
 
 // If you extend this structure, either avoid pointers or adjust
 // the game logic allocate/deallocate and reset the memory
