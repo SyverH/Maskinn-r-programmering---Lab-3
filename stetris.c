@@ -136,14 +136,33 @@ void freeSenseHat() {
 // and KEY_ENTER, when the the joystick is pressed
 // !!! when nothing was pressed you MUST return 0 !!!
 int readSenseHatJoystick() {
-  
+
+  struct pollfd pfd;
+
+  pfd.fd = fd;
+  pfd.events = POLLIN;
+
+  if (poll(&pfd, 1, 0) == -1) {
+        perror("Poll-feil");
+        close(fd);
+        return 0;
+    }
+
+  if (pfd.revents & POLLIN) {
+        if (read(fd, &ev, sizeof(struct input_event)) == -1) {
+            perror("Lesing av hendelse feilet");
+            close(fd);
+            return 0;
+        }
+
+  /*
   // Hvis avlesning av hendelse feiler, avslutt
   if (read(fd, &ev, sizeof(struct input_event)) == -1) {
       perror("Lesing av hendelse feilet");
       close(fd);
       return 0;
   }
-  
+  */
   // Begrenser hvilke event-types som returneres
   if (ev.type == EV_KEY && (ev.code == KEY_UP || ev.code == KEY_DOWN || ev.code == KEY_LEFT || ev.code == KEY_RIGHT || ev.code == KEY_ENTER)) {
       // Rising edge detector, så knappen ikke leses av flere ganger
