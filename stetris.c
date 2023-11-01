@@ -104,6 +104,8 @@ bool initializeSenseHat() {
       printf("the path is: %s\n", frameBufferpath);
       frameBufferfd = open(frameBufferpath, O_RDWR);
 
+      printf("the fd is: %d\n", frameBufferfd);
+
       if (frameBufferfd != -1) {
         // Initialiserer deviceName som et char array der jeg kan lagre navnet på enheten som leses
         char deviceName[256];
