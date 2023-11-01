@@ -11,6 +11,7 @@
 
 #include <dirent.h>
 #include <fcntl.h>
+#include <linux/fb.h>
 
 struct input_event ev;
 
