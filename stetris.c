@@ -487,16 +487,25 @@ int main(int argc, char **argv) {
     struct timeval sTv, eTv;
     gettimeofday(&sTv, NULL);
 
+    printf("1\n");
+
     int key = readSenseHatJoystick();
+
+    printf("2\n");
+
     if (!key)
       key = readKeyboard();
     if (key == KEY_ENTER)
       printf("ENTER\n");
       break;
 
+    printf("3\n");
+
     bool playfieldChanged = sTetris(key);
     renderConsole(playfieldChanged);
     renderSenseHatMatrix(playfieldChanged);
+
+    printf("4\n");
 
     // Wait for next tick
     gettimeofday(&eTv, NULL);
