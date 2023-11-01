@@ -139,12 +139,12 @@ void freeSenseHat() {
 // !!! when nothing was pressed you MUST return 0 !!!
 int readSenseHatJoystick() {
   
-  while (1) {
+  //while (1) {
         // Hvis avlesning av hendelse feiler, avslutt
         if (read(fd, &ev, sizeof(struct input_event)) == -1) {
             perror("Lesing av hendelse feilet");
             close(fd);
-            return false;
+            return 0;
         }
         
         // Begrenser hvilke event-types som returneres
@@ -158,7 +158,7 @@ int readSenseHatJoystick() {
                 return ev.code;
             }
         }
-    }
+    //}
   // Returnerer 0 hvis ingen knapp er trykket
   return 0;
 }
