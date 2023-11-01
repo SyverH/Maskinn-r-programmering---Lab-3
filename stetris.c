@@ -81,8 +81,6 @@ bool initializeSenseHat() {
   // This loop will scan the /dev/input directory for devices, allowing all devices through
   int numLoops = scandir("/dev/input", &subDirectoryNameList, NULL, alphasort);
 
-
-
   // Hvis scandir feiler, avslutt
   if (numLoops < 0) {
     perror("scandir failed!");
@@ -508,6 +506,7 @@ int main(int argc, char **argv) {
     }
     game.tick = (game.tick + 1) % game.nextGameTick;
   }
+  printf("I broke free!\n");
 
   freeSenseHat();
   free(game.playfield);
