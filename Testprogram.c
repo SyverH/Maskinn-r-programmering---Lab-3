@@ -72,11 +72,11 @@ int readSenseHatJoystick() {
             return 1;
         }
 
-        if (ev.type == EV_KEY && (ev.code == KEY_UP || ev.code == KEY_DOWN || ev.code == KEY_LEFT || ev.code == KEY_RIGHT)) {
+        if (ev.type == EV_KEY && (ev.code == KEY_UP || ev.code == KEY_DOWN || ev.code == KEY_LEFT || ev.code == KEY_RIGHT || ev.code == KEY_ENTER)) {
             if (ev.value == 0) {
             } else if (ev.value == 1) {
                 // Knappen trykkes ned
-                /*
+                
                 if (ev.code == KEY_UP) {
                     printf("Retning: Opp\n");
                 } else if (ev.code == KEY_DOWN) {
@@ -88,8 +88,6 @@ int readSenseHatJoystick() {
                 } else if (ev.code == 28) {
                     printf("Retning: Enter\n");
                 }
-                */
-                printf("Retning: %d\n", ev.code);
             }
         }
     }
