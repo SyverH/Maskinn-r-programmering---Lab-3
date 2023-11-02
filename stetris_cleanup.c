@@ -208,16 +208,12 @@ bool framebufferInit(){
 // Here you can initialize what ever you need for your task
 // return false if something fails, else true
 bool initializeSenseHat() {
-    /*
     if(!joystickInit()){
         return false;
     }
     if(!framebufferInit()){
         return false;
     }
-    */
-   joystickInit();
-   framebufferInit();
     return true;
 }
 
@@ -226,6 +222,7 @@ bool initializeSenseHat() {
 // Here you can free up everything that you might have opened/allocated
 void freeSenseHat() {
   close(fd);
+  close(fbfd);
   munmap(pixelarray, 128);
 }
 
