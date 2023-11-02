@@ -153,6 +153,7 @@ bool joystickInit(){
 
 // This 
 bool framebufferInit(){
+    struct timeval timeout;
     struct dirent **subDirectoryNameList;
 
     char path[64];
