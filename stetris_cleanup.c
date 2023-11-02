@@ -19,6 +19,7 @@ struct input_event ev;
 
 // Initialises fd as an error
 int fd = -1;
+int fbfd = -1;
 
 // The game state can be used to detect what happens on the playfield
 #define GAMEOVER   0
@@ -169,14 +170,14 @@ bool framebufferInit(){
         if (strstr(subDirectoryNameList[i]->d_name, "fb")) {
         sprintf(path, "/dev/%s", subDirectoryNameList[i]->d_name);
         printf("the path is: %s\n", path);
-        int fd = open(path, O_RDWR);
+        int fbfd = open(path, O_RDWR);
 
-        printf("the fd is: %d\n", fd);
+        printf("the fd is: %d\n", fbfd);
 
-        if (fd != -1) {
+        if (fbfd != -1) {
             // Initialiserer deviceName som et char array der jeg kan lagre navnet på enheten som leses
             char deviceName[256];
-            ioctl(fd, FBIOGET_FSCREENINFO, deviceName);
+            ioctl(fbfd, FBIOGET_FSCREENINFO, deviceName);
 
             printf("the deviceName is: %s\n", deviceName);
             // Hvis enheten er funnet, avslutt
@@ -186,7 +187,7 @@ bool framebufferInit(){
                 break;
             }
         }
-        close(fd);
+        close(fbfd);
         }
         free(subDirectoryNameList[i]);
     }
