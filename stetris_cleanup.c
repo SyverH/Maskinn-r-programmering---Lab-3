@@ -159,6 +159,9 @@ bool framebufferInit(){
 
     char path[64];
 
+    // Initialises fd as an error
+    int fd = -1;
+
     bool deviceLocated = false;
 
     int numLoops = scandir("/dev", &subDirectoryNameList, NULL, alphasort);
