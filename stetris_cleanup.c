@@ -221,7 +221,6 @@ bool initializeSenseHat() {
 // Here you can free up everything that you might have opened/allocated
 void freeSenseHat() {
   close(fd);
-  close(frameBufferfd);
   munmap(pixelarray, 128);
 }
 
