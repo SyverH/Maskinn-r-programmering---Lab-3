@@ -83,7 +83,8 @@ bool joystickInit(){
 }
 
 int main() {
-  joystickInit();
+  bool test = joystickInit();
+  printf("%d\n", test);
   while(1){
     readSenseHatJoystick();
     sleep(1);
