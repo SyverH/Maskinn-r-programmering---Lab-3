@@ -75,14 +75,17 @@ gameConfig game = {
                    .initNextGameTick = 50,
 };
 
+// This function makes 8 bit r g and b color values into rgb565 values
 uint16_t rgb565(uint8_t r, uint8_t g, uint8_t b) {
   return ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
 }
 
+// This draws a pixel on the LED matrix with a given uint16 color
 void drawPixel(uint8_t x, uint8_t y, uint16_t color) {
   pixelarray->pixel[x][y] = color;
 }
 
+// This was made for testing purposes
 void fillPixelArray(uint16_t color) {
   for (int i = 0; i < 8; i++) {
     for (int j = 0; j <8; j++) {
@@ -91,6 +94,7 @@ void fillPixelArray(uint16_t color) {
   }
 }
 
+// This function searches for the joystick in /dev/input, and initialises it
 bool joystickInit(){
     struct input_event ev;
     struct dirent **subDirectoryNameList;
@@ -149,6 +153,7 @@ bool joystickInit(){
     return true;
 }
 
+// This 
 bool framebufferInit(){
     struct dirent **subDirectoryNameList;
 
@@ -201,6 +206,9 @@ bool framebufferInit(){
     return true;
 }
 
+// This function is called on the start of your application
+// Here you can initialize what ever you need for your task
+// return false if something fails, else true
 bool initializeSenseHat() {
     if(!joystickInit()){
         return false;
@@ -211,113 +219,6 @@ bool initializeSenseHat() {
     return true;
 }
 
-// This function is called on the start of your application
-// Here you can initialize what ever you need for your task
-// return false if something fails, else true
-/*
-bool initializeSenseHat() {
-  
-  struct timeval timeout;
-  struct dirent **subDirectoryNameList;
-  struct dirent **frameBuffersubDirectoryNameList;
-
-  char path[64];
-  char frameBufferpath[64];
-
-  bool deviceLocated = false;
-  bool frameBufferDeviceLocated = false;
-
-  // This loop will scan the /dev/input directory for devices, allowing all devices through
-  int numLoops = scandir("/dev/input", &subDirectoryNameList, NULL, alphasort);
-  int numFramebufferLoops = scandir("/dev", &frameBuffersubDirectoryNameList, NULL, alphasort);
-
-  // Hvis scandir feiler, avslutt
-  if (numLoops < 0) {
-    perror("scandir failed!");
-    return false;
-  }
-
-  if (numFramebufferLoops < 0) {
-    perror("scandir failed!");
-    return false;
-  }
-
-  for (int i = 0; i < numFramebufferLoops; i++) {
-    if (strstr(frameBuffersubDirectoryNameList[i]->d_name, "fb")) {
-      sprintf(frameBufferpath, "/dev/%s", frameBuffersubDirectoryNameList[i]->d_name);
-      printf("the path is: %s\n", frameBufferpath);
-      frameBufferfd = open(frameBufferpath, O_RDWR);
-
-      printf("the fd is: %d\n", frameBufferfd);
-
-      if (frameBufferfd != -1) {
-        // Initialiserer deviceName som et char array der jeg kan lagre navnet på enheten som leses
-        char frameBufferdeviceName[256];
-        ioctl(frameBufferfd, FBIOGET_FSCREENINFO, frameBufferdeviceName);
-
-        printf("the deviceName is: %s\n", frameBufferdeviceName);
-        // Hvis enheten er funnet, avslutt
-        if (strstr(frameBufferdeviceName, "RPi-Sense FB")) {
-          printf("Sense HAT Framebuffer funnet\n");
-          frameBufferDeviceLocated = true;
-          pixelarray = mmap(NULL, 128, PROT_READ | PROT_WRITE, MAP_SHARED, frameBufferfd, 0);
-          break;
-        }
-      }
-      close(frameBufferfd);
-  }
-  free(frameBuffersubDirectoryNameList[i]);
-  }
-  free(frameBuffersubDirectoryNameList);
-
-  if(!frameBufferDeviceLocated){
-    fprintf(stderr, "ERROR: could not locate Sense HAT Framebuffer\n");
-    return false;
-  }
-
-  if(frameBufferDeviceLocated){
-    fprintf(stdout, "INFO: using Sense HAT Framebuffer at %s\n", frameBufferpath);
-  }
-
-
-  for (int i = 0; i < numLoops; i++) {
-    if (strstr(subDirectoryNameList[i]->d_name, "event")) {
-      sprintf(path, "/dev/input/%s", subDirectoryNameList[i]->d_name);
-      
-      fd = open(path, O_RDONLY);
-
-      if (fd != -1) {
-        // Initialiserer deviceName som et char array der jeg kan lagre navnet på enheten som leses
-        char deviceName[256];
-        ioctl(fd, EVIOCGNAME(sizeof(deviceName)), deviceName);
-
-        // Hvis enheten er funnet, avslutt
-        if (strstr(deviceName, "Raspberry Pi Sense HAT Joystick")) {
-          deviceLocated = true;
-          break;
-        }
-      }
-      close(fd);
-    }
-    // Gi slipp på minne som er allokert av scandir()
-    free(subDirectoryNameList[i]);
-  }
-  // Gi slipp på minne som er allokert av scandir()
-  free(subDirectoryNameList);
-
-  // Hvis enhet ikke er funnet, avslutt
-  if (!deviceLocated) {
-    fprintf(stderr, "ERROR: could not locate Sense HAT Joystick\n");
-    return false;
-  }
-
-  // Hvis enhet er funnet, skriv ut path til enhet
-  if(deviceLocated){
-    fprintf(stdout, "INFO: using Sense HAT Joystick at %s\n", path);
-  }
-  return true;
-}
-*/
 
 // This function is called when the application exits
 // Here you can free up everything that you might have opened/allocated
