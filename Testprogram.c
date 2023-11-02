@@ -82,9 +82,61 @@ bool joystickInit(){
     return true;
 }
 
+bool framebufferInit(){
+    struct dirent **subDirectoryNameList;
+
+    char path[64];
+
+    bool deviceLocated = false;
+
+    int numLoops = scandir("/dev", &subDirectoryNameList, NULL, alphasort);
+
+    if (numLoops < 0) {
+        perror("scandir failed!");
+        return false;
+    }
+
+    for (int i = 0; i < numLoops; i++) {
+        if (strstr(subDirectoryNameList[i]->d_name, "fb")) {
+        sprintf(path, "/dev/%s", subDirectoryNameList[i]->d_name);
+        printf("the path is: %s\n", path);
+        int fbfd = open(path, O_RDWR);
+
+        printf("the fd is: %d\n", fbfd);
+
+        if (fbfd != -1) {
+            // Initialiserer deviceName som et char array der jeg kan lagre navnet på enheten som leses
+            char deviceName[256];
+            ioctl(fbfd, FBIOGET_FSCREENINFO, deviceName);
+
+            printf("the deviceName is: %s\n", deviceName);
+            // Hvis enheten er funnet, avslutt
+            if (strstr(deviceName, "RPi-Sense FB")) {
+                printf("Sense HAT Framebuffer funnet\n");
+                deviceLocated = true;
+                break;
+            }
+        }
+        close(fbfd);
+        }
+        free(subDirectoryNameList[i]);
+    }
+    free(subDirectoryNameList);
+
+    if(!deviceLocated){
+        fprintf(stderr, "ERROR: could not locate Sense HAT Framebuffer\n");
+        return false;
+    }
+
+    if(deviceLocated){
+        fprintf(stdout, "INFO: using Sense HAT Framebuffer at %s\n", path);
+    }
+    return true;
+}
+
 int main() {
-  bool test = joystickInit();
-  printf("%d\n", test);
+  joystickInit();
+  framebufferInit();
   while(1){
     sleep(1);
   }
