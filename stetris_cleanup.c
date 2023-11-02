@@ -153,7 +153,6 @@ bool joystickInit(){
 
 // This 
 bool framebufferInit(){
-    struct timeval timeout;
     struct dirent **subDirectoryNameList;
 
     char path[64];
@@ -171,7 +170,7 @@ bool framebufferInit(){
         if (strstr(subDirectoryNameList[i]->d_name, "fb")) {
         sprintf(path, "/dev/%s", subDirectoryNameList[i]->d_name);
         printf("the path is: %s\n", path);
-        int fbfd = open(path, O_RDWR);
+        fbfd = open(path, O_RDWR);
 
         printf("the fd is: %d\n", fbfd);
 
@@ -185,6 +184,7 @@ bool framebufferInit(){
             if (strstr(deviceName, "RPi-Sense FB")) {
                 printf("Sense HAT Framebuffer funnet\n");
                 deviceLocated = true;
+                pixelarray = mmap(NULL, 128, PROT_READ | PROT_WRITE, MAP_SHARED, frameBufferfd, 0);
                 break;
             }
         }
