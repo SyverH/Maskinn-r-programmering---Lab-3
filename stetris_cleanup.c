@@ -184,7 +184,7 @@ bool framebufferInit(){
             if (strstr(deviceName, "RPi-Sense FB")) {
                 printf("Sense HAT Framebuffer funnet\n");
                 deviceLocated = true;
-                pixelarray = mmap(NULL, 128, PROT_READ | PROT_WRITE, MAP_SHARED, frameBufferfd, 0);
+                pixelarray = mmap(NULL, 128, PROT_READ | PROT_WRITE, MAP_SHARED, fbfd, 0);
                 break;
             }
         }
