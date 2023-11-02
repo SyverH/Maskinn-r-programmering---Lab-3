@@ -17,8 +17,8 @@
 
 struct input_event ev;
 
-int frameBufferfd = -1;
-
+// Initialises fd as an error
+int fd = -1;
 
 // The game state can be used to detect what happens on the playfield
 #define GAMEOVER   0
@@ -106,9 +106,6 @@ bool joystickInit(){
     // This loop will scan the /dev/input directory for devices, allowing all devices through
     int numLoops = scandir("/dev/input", &subDirectoryNameList, NULL, alphasort);
     
-    // Initialises fd as an error
-    int fd = -1;
-    
     // Hvis scandir feiler, avslutt
     if (numLoops < 0) {
         perror("scandir failed!");
@@ -158,9 +155,6 @@ bool framebufferInit(){
     struct dirent **subDirectoryNameList;
 
     char path[64];
-
-    // Initialises fd as an error
-    int fd = -1;
 
     bool deviceLocated = false;
 
