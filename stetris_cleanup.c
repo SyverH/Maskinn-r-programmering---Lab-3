@@ -17,7 +17,7 @@
 
 struct input_event ev;
 
-// Initialises fd as an error
+// Initialises fd and framebuffer fd as an error
 int fd = -1;
 int fbfd = -1;
 
@@ -31,6 +31,7 @@ typedef struct {
   uint16_t pixel[8][8]; // 8x8 pixel array
 }pixeltype;
 
+// Makes a pointer to the pixel array
 pixeltype* pixelarray;
 
 // If you extend this structure, either avoid pointers or adjust
@@ -107,12 +108,13 @@ bool joystickInit(){
     // This loop will scan the /dev/input directory for devices, allowing all devices through
     int numLoops = scandir("/dev/input", &subDirectoryNameList, NULL, alphasort);
     
-    // Hvis scandir feiler, avslutt
+    // If scandir fails, exit
     if (numLoops < 0) {
         perror("scandir failed!");
         return false;
     }
     
+    // Check each subdirectory for the joystick
     for (int i = 0; i < numLoops; i++) {
         if (strstr(subDirectoryNameList[i]->d_name, "event")) {
         sprintf(path, "/dev/input/%s", subDirectoryNameList[i]->d_name);
@@ -132,26 +134,27 @@ bool joystickInit(){
         }
         close(fd);
         }
-        // Gi slipp på minne som er allokert av scandir()
+        // Release memory allocated by scandir()
         free(subDirectoryNameList[i]);
     }
-    // Gi slipp på minne som er allokert av scandir()
+    // Release memory allocated by scandir()
     free(subDirectoryNameList);
     
-    // Hvis enhet ikke er funnet, avslutt
+    // If device is not found, exit
     if (!deviceLocated) {
         fprintf(stderr, "ERROR: could not locate Sense HAT Joystick\n");
         return false;
     }
 
-    // Hvis enhet er funnet, skriv ut path til enhet
+    // If device is found, print path
     if(deviceLocated){
         fprintf(stdout, "INFO: using Sense HAT Joystick at %s\n", path);
     }
+
     return true;
 }
 
-// This 
+// This function searches for the framebuffer in /dev, and initialises it
 bool framebufferInit(){
     struct dirent **subDirectoryNameList;
 
@@ -159,13 +162,16 @@ bool framebufferInit(){
 
     bool deviceLocated = false;
 
+    // This loop will scan the /dev directory for devices, allowing all devices through
     int numLoops = scandir("/dev", &subDirectoryNameList, NULL, alphasort);
 
+    // If scandir fails, exit
     if (numLoops < 0) {
         perror("scandir failed!");
         return false;
     }
 
+    // Check each subdirectory for the framebuffer
     for (int i = 0; i < numLoops; i++) {
         if (strstr(subDirectoryNameList[i]->d_name, "fb")) {
         sprintf(path, "/dev/%s", subDirectoryNameList[i]->d_name);
@@ -174,16 +180,18 @@ bool framebufferInit(){
 
         printf("the fd is: %d\n", fbfd);
 
+        // If the device is found, initialise pixelarray
         if (fbfd != -1) {
-            // Initialiserer deviceName som et char array der jeg kan lagre navnet på enheten som leses
+            // Initialises the deviceName as a char array where I can store the name of the device that is read
             char deviceName[256];
             ioctl(fbfd, FBIOGET_FSCREENINFO, deviceName);
 
             printf("the deviceName is: %s\n", deviceName);
-            // Hvis enheten er funnet, avslutt
+            // If the device is found, exit
             if (strstr(deviceName, "RPi-Sense FB")) {
                 printf("Sense HAT Framebuffer funnet\n");
                 deviceLocated = true;
+                // Memory map the framebuffer
                 pixelarray = mmap(NULL, 128, PROT_READ | PROT_WRITE, MAP_SHARED, fbfd, 0);
                 break;
             }
@@ -194,11 +202,13 @@ bool framebufferInit(){
     }
     free(subDirectoryNameList);
 
+    // If device is not found, exit
     if(!deviceLocated){
         fprintf(stderr, "ERROR: could not locate Sense HAT Framebuffer\n");
         return false;
     }
 
+    // If device is found, print path
     if(deviceLocated){
         fprintf(stdout, "INFO: using Sense HAT Framebuffer at %s\n", path);
     }
@@ -233,17 +243,20 @@ void freeSenseHat() {
 // !!! when nothing was pressed you MUST return 0 !!!
 int readSenseHatJoystick() {
 
+  // Initialise a pollfd struct
   struct pollfd pfd;
 
   pfd.fd = fd;
   pfd.events = POLLIN;
 
+  // If poll returns -1, there is an error
   if (poll(&pfd, 1, 0) == -1) {
         perror("Poll-feil");
         close(fd);
         return 0;
     }
-
+  
+  // if pfd.revents is POLLIN, read the event
   if (pfd.revents & POLLIN) {
         if (read(fd, &ev, sizeof(struct input_event)) == -1) {
             perror("Lesing av hendelse feilet");
@@ -252,15 +265,15 @@ int readSenseHatJoystick() {
         }
   }
 
-  // Begrenser hvilke event-types som returneres
+  // Limit the event types to key events
   if (ev.type == EV_KEY && (ev.code == KEY_UP || ev.code == KEY_DOWN || ev.code == KEY_LEFT || ev.code == KEY_RIGHT || ev.code == KEY_ENTER)) {
-      // Rising edge detector, så knappen ikke leses av flere ganger
+      // Rising edge detector, so that the key is only registered once
       if (ev.value == 1) {
-        // Returnerer event-koden til knapp som er trykket
+        // Returns the event code of the button that is pressed
         return ev.code;
       }
       else if (ev.value == 2) {
-        // Returnerer event-koden til knapp som er holdt inne
+        // Returns if the button is held
         return ev.code;
       }
   }
